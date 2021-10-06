@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS (jsDelivr CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+  <style>
+    .wrapper {
+      width: 800px;
+      margin: 0 auto;
+    }
+
+    .btn-group {
+      width: 800px;
+      margin: 0 auto;
+    }
+
+    .coefficientFields {
+      width: 800px;
+      margin: 0 auto;
+    }
+
+    .coefficientFields>.form-control {
+      margin-left: 20px;
+    }
+
+    .coefficientFields>.form-control:first-child {
+      margin-left: 0;
+    }
+
+    body {
+      background: #fcfcfc;
+    }
+
+    h2 {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    h4 {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .showGraph {
+      margin-top: 20px;
+      width: 800px;
+    }
+
+    .pref {
+      margin: 20px 0;
+    }
+
+    /*# sourceMappingURL=style.css.map */
+  </style>
+  <!-- <link rel="stylesheet" href="/css/style.css"> -->
+  <title>Построение графиков базовых полиноминальных функций</title>
+</head>
+
+<body>
+  <div class="wrapper">
+    <h2>Выберите степень функции</h2>
+    <div class="btn-group" role="group" aria-label="Выбор степени функции">
+      <button type="button" class="btn btn-primary pwr-btn" id="b1" onclick="b1f()">1</button>
+      <button type="button" class="btn btn-primary pwr-btn" id="b2" onclick="b2f()">2</button>
+      <button type="button" class="btn btn-primary pwr-btn" id="b3" onclick="b3f()">3</button>
+      <button type="button" class="btn btn-primary pwr-btn" id="b4" onclick="b4f()">4</button>
+    </div>
+    <div class="mb-3">
+      <h4>Введите коэффициенты функции</h4>
+      <div class="row coefficientFields">
+        <input type="text" class="form-control col-sm" id="c1" placeholder="коэф. при x^4" value="0" disabled="true">
+        <input type="text" class="form-control col-sm" id="c2" placeholder="коэф. при x^3" value="1" disabled="true">
+        <input type="text" class="form-control col-sm" id="c3" placeholder="коэф. при x^2" value="0" disabled="true">
+        <input type="text" class="form-control col-sm" id="c4" placeholder="коэф. при x^1" value="0" disabled="true">
+        <input type="text" class="form-control col-sm" id="c5" placeholder="свобод. член" value="0" disabled="true">
+      </div>
+      <button class="btn btn-primary showGraph" type="button" id="mybutton" onclick="showGraph()">Показать
+        график</button>
+    </div>
+    <canvas id="myChart" width="800" height="800"></canvas>
+    <div class="row pref">
+      <div class="col-sm">
+        <h5>слева</h5>
+        <input type="text" class="form-control col-sm" id="h1" value="-2.0" onchange="showGraph()">
+      </div>
+      <div class="col-sm">
+        <h5>справа</h5>
+        <input type="text" class="form-control col-sm" id="h2" value="2.0" onchange="showGraph()">
+      </div>
+      <div class="col-sm">
+        <h5>шаг</h5>
+        <input type="text" class="form-control col-sm" id="h3" value="0.1" onchange="showGraph()">
+      </div>
+    </div>
+  </div>
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"
+    integrity="sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- <script src="/js/script.js"></script> -->
+  <script>let myChart;
+
+    //получаем значения коэффициентов
+    let a = Number(document.getElementById('c1').value);
+    let b = Number(document.getElementById('c2').value);
+    let c = Number(document.getElementById('c3').value);
+    let d = Number(document.getElementById('c4').value);
+    let e = Number(document.getElementById('c5').value);
+
+    //получаем значения пределов по оси x и шага
+    let xLeft = Number(document.getElementById('h1').value);
+    let xRight = Number(document.getElementById('h2').value);
+    let step = Number(document.getElementById('h3').value);
+
+    //выводим пример графика функции y=x^3
+    myChart = graph(a, b, c, d, e);
+
+    //функция для обновления графика при изменении коэффициентов
+    function showGraph() {
+      myChart.destroy();
+      a = Number(document.getElementById('c1').value);
+      b = Number(document.getElementById('c2').value);
+      c = Number(document.getElementById('c3').value);
+      d = Number(document.getElementById('c4').value);
+      e = Number(document.getElementById('c5').value);
+      xLeft = Number(document.getElementById('h1').value);
+      xRight = Number(document.getElementById('h2').value);
+      step = Number(document.getElementById('h3').value);
+      myChart = graph(a, b, c, d, e);
+    }
+
+    function graph(a, b, c, d, e) {
+      var ctx = document.getElementById("myChart");
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'f(x)',
+              data: [],
+              borderColor: '#0d6efd',
+              borderWidth: 2,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            xAxes: [{
+              display: true
+            }],
+            yAxes: [{
+              display: true
+            }]
+          }
+        }
+      });
+
+      for (var x = xLeft; x <= xRight; x += step) {
+        myChart.data.labels.push('' + x.toFixed(2)); //заполняем массив значений на оси x
+        myChart.data.datasets[0].data.push(f(x, a, b, c, d, e).toFixed(2)); //заполняем значение функции
+      }
+      //Обновляем график
+      myChart.update('none');
+
+      function f(x, a, b, c, d, e) {
+        return (a * Math.pow(x, 4) + b * Math.pow(x, 3) + c * Math.pow(x, 2) + d * Math.pow(x, 1) + e);
+      }
+      return myChart;
+    }
+
+    function b1f() {
+      //отключаем ненужные поля
+      document.getElementById('c1').disabled = true;
+      document.getElementById('c1').value = '';
+      document.getElementById('c2').disabled = true;
+      document.getElementById('c2').value = '';
+      document.getElementById('c3').disabled = true;
+      document.getElementById('c3').value = '';
+      document.getElementById('c4').disabled = false;
+      document.getElementById('c4').value = '';
+      document.getElementById('c5').disabled = false;
+      document.getElementById('c5').value = '';
+
+      //меняем цвет активной кнопки
+      document.getElementById('b2').style.background = "#0d6efd";
+      document.getElementById('b2').style.borderColor = "#0d6efd";
+      document.getElementById('b1').style.background = "green";
+      document.getElementById('b1').style.borderColor = "green";
+      document.getElementById('b3').style.background = "#0d6efd";
+      document.getElementById('b3').style.borderColor = "#0d6efd";
+      document.getElementById('b4').style.background = "#0d6efd ";
+      document.getElementById('b4').style.borderColor = "#0d6efd";
+    }
+
+    function b2f() {
+      document.getElementById('c1').disabled = true;
+      document.getElementById('c1').value = '';
+      document.getElementById('c2').disabled = true;
+      document.getElementById('c2').value = '';
+      document.getElementById('c3').disabled = false;
+      document.getElementById('c3').value = '';
+      document.getElementById('c4').disabled = false;
+      document.getElementById('c4').value = '';
+      document.getElementById('c5').disabled = false;
+      document.getElementById('c5').value = '';
+
+      document.getElementById('b1').style.background = "#0d6efd";
+      document.getElementById('b1').style.borderColor = "#0d6efd";
+      document.getElementById('b2').style.background = "green";
+      document.getElementById('b2').style.borderColor = "green";
+      document.getElementById('b3').style.background = "#0d6efd";
+      document.getElementById('b3').style.borderColor = "#0d6efd";
+      document.getElementById('b4').style.background = "#0d6efd ";
+      document.getElementById('b4').style.borderColor = "#0d6efd";
+    }
+
+    function b3f() {
+      document.getElementById('c1').disabled = true;
+      document.getElementById('c1').value = '';
+      document.getElementById('c2').disabled = false;
+      document.getElementById('c2').value = '';
+      document.getElementById('c3').disabled = false;
+      document.getElementById('c3').value = '';
+      document.getElementById('c4').disabled = false;
+      document.getElementById('c4').value = '';
+      document.getElementById('c5').disabled = false;
+      document.getElementById('c5').value = '';
+
+      document.getElementById('b1').style.background = "#0d6efd";
+      document.getElementById('b1').style.borderColor = "#0d6efd";
+      document.getElementById('b3').style.background = "green";
+      document.getElementById('b3').style.borderColor = "green";
+      document.getElementById('b2').style.background = "#0d6efd";
+      document.getElementById('b2').style.borderColor = "#0d6efd";
+      document.getElementById('b4').style.background = "#0d6efd ";
+      document.getElementById('b4').style.borderColor = "#0d6efd";
+    }
+
+    function b4f() {
+      document.getElementById('c1').disabled = false;
+      document.getElementById('c1').value = '';
+      document.getElementById('c2').disabled = false;
+      document.getElementById('c2').value = '';
+      document.getElementById('c3').disabled = false;
+      document.getElementById('c3').value = '';
+      document.getElementById('c4').disabled = false;
+      document.getElementById('c4').value = '';
+      document.getElementById('c5').disabled = false;
+      document.getElementById('c5').value = '';
+
+      document.getElementById('b1').style.background = "#0d6efd";
+      document.getElementById('b1').style.borderColor = "#0d6efd";
+      document.getElementById('b4').style.background = "green";
+      document.getElementById('b4').style.borderColor = "green";
+      document.getElementById('b2').style.background = "#0d6efd";
+      document.getElementById('b2').style.borderColor = "#0d6efd";
+      document.getElementById('b3').style.background = "#0d6efd ";
+      document.getElementById('b3').style.borderColor = "#0d6efd";
+    }
+
+  </script>
+</body>
+
+</html>

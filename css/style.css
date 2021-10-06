@@ -1,0 +1,46 @@
+.wrapper {
+  width: 800px;
+  margin: 0 auto;
+}
+
+.btn-group {
+  width: 800px;
+  margin: 0 auto;
+}
+
+.coefficientFields {
+  width: 800px;
+  margin: 0 auto;
+}
+
+.coefficientFields > .form-control {
+  margin-left: 20px;
+}
+
+.coefficientFields > .form-control:first-child {
+  margin-left: 0;
+}
+
+body {
+  background: #fcfcfc;
+}
+
+h2 {
+  margin: 20px 0;
+  text-align: center;
+}
+
+h4 {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.showGraph {
+  margin-top: 20px;
+  width: 800px;
+}
+
+.pref {
+  margin: 20px 0;
+}
+/*# sourceMappingURL=style.css.map */
